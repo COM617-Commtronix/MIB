@@ -1,0 +1,2 @@
+The SNMP interface supports SNMP V1 only.
+Please contact support@dbbroadcast.co.uk to obtain the latest MIB; there are no special states or sequences required for accessing the MIB.

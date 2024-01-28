@@ -1,0 +1,6 @@
+to download the FM transmitter you need:
+	- IP address of the transmitter
+follow the link to download
+	- IPADRESS/API/BWB-TX-V2-MIB.mib
+
+this is for the V2 maybe for the V3 is the same
