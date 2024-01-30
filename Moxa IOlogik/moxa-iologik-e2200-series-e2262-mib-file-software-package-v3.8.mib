@@ -1,0 +1,448 @@
+--
+-- *****************************************************************
+-- Moxa Active Ethernet I/O Server MIB
+--
+-- 11-07-2008
+--
+-- Copyright (c) 2008 by Moxa Networking Co., Ltd.
+-- All rights reserved.
+-- *****************************************************************
+-- 
+
+MOXA-IO-E2262-MIB DEFINITIONS ::= BEGIN
+	IMPORTS
+        enterprises, Unsigned32, Integer32, MODULE-IDENTITY, NOTIFICATION-TYPE, OBJECT-TYPE FROM SNMPv2-SMI;
+
+-- 1.3.6.1.4.1.8691.10.2262
+--	e2262 OBJECT IDENTIFIER ::= { e2000 2262 }
+
+    e2262   MODULE-IDENTITY
+    LAST-UPDATED "201602161500Z"
+    ORGANIZATION "Moxa Networking,Inc."
+    CONTACT-INFO
+            "Postal: Moxa Networking,Inc.
+             Fl.4, No.135,Lane 235,Pao-Chiao Rd.
+             Shing Tien City,Taipei,Taiwan,R.O.C
+             Tel: +866-2-89191230 "
+
+    DESCRIPTION
+            "The MIB module for Moxa ioLogik Active Ethernet I/O specific information.(V2.0)" 
+            
+    REVISION "201602161500Z"    
+    DESCRIPTION
+            "Update DESCRIPTION sequence for display"  
+                  
+    REVISION "201601141500Z"
+    DESCRIPTION
+            "Modify doStatus SYNTAX from Unsigned32 to Integer32.
+             Modify OBJECT-TYPE Name of doLowWidth to doPulseONWidth. 
+             Modify OBJECT-TYPE Name of doHighWidth to doPulseOFFWidth."
+                          
+    REVISION "201112131900Z"
+    DESCRIPTION
+            "Updated version of this MIB."
+           ::= { e2000 2262 }    -- 1.3.6.1.4.1.8691.10.2262
+
+
+
+-- 1.3.6.1.4.1.8691
+	moxa OBJECT IDENTIFIER ::= { enterprises 8691 }
+
+-- 1.3.6.1.4.1.8691.10
+	e2000 OBJECT IDENTIFIER ::= { moxa 10 }
+
+
+-- 1.3.6.1.4.1.8691.10.2262.1
+	totalChannelNumber OBJECT-TYPE
+		SYNTAX Integer32(1..20)
+		MAX-ACCESS read-only
+		STATUS current
+		DESCRIPTION
+			"Total I/O channels."
+		::= { e2262 1 }
+
+-- 1.3.6.1.4.1.8691.10.2262.2
+	serverModel OBJECT-TYPE
+		SYNTAX OCTET STRING (SIZE (0..512))
+		MAX-ACCESS read-only
+		STATUS current
+		DESCRIPTION
+			"The I/O server model."
+		::= { e2262 2 }
+
+-- 1.3.6.1.4.1.8691.10.2262.3
+	systemTime OBJECT-TYPE
+		SYNTAX Integer32
+		MAX-ACCESS read-only
+		STATUS current
+		DESCRIPTION
+			"I/O server up time (in seconds)."
+		::= { e2262 3 }
+
+-- 1.3.6.1.4.1.8691.10.2262.4
+	firmwareVersion OBJECT-TYPE
+		SYNTAX OCTET STRING (SIZE (0..512))
+		MAX-ACCESS read-only
+		STATUS current
+		DESCRIPTION
+			"The firmware version."
+		::= { e2262 4 }
+
+----------------------------------------------------------------
+-- I/O
+-- 1.3.6.1.4.1.8691.10.2262.10
+	e2262monitor OBJECT IDENTIFIER ::= { e2262 10 }
+
+----------------------------------------------------------------
+-- TC-00
+tcTable OBJECT-TYPE
+		SYNTAX 			SEQUENCE OF TCEntry
+		MAX-ACCESS 		not-accessible
+		STATUS 			current
+		DESCRIPTION		"The TC channel monitor table"
+		::= { e2262monitor 1 }
+
+tcEntry OBJECT-TYPE
+		SYNTAX			TCEntry
+		MAX-ACCESS 		not-accessible
+		STATUS 			current
+		DESCRIPTION		"The TC channel monitor item"
+		INDEX { tcIndex }
+		::= { tcTable 1 }
+
+TCEntry ::=	SEQUENCE {
+		tcIndex		Integer32,
+		tcEnable	Integer32,
+		tcType		Integer32,
+		tcUnitType	Integer32,
+		tcValue		Integer32
+}
+
+tcIndex OBJECT-TYPE
+		SYNTAX 			Integer32(1..16)
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"The TC channel index."
+		::= { tcEntry 1 }    
+
+tcEnable OBJECT-TYPE
+		SYNTAX 			Integer32(0..1)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The TC channel enable. (1:enable ,0:disable)"
+		::= { tcEntry 2 }
+
+      
+tcType OBJECT-TYPE
+		SYNTAX 			Integer32(0..10)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The TC channel type. J_TYPE=0, K_TYPE=1, T_TYPE=2, E_TYPE=3, R_TYPE=4, S_TYPE=5, B_TYPE=6, N_TYPE=7, Voltage_78mV=8, Voltage_39mV=9,Voltage_19mV=10"
+		::= { tcEntry 3 }
+		   
+tcUnitType OBJECT-TYPE
+		SYNTAX 			Integer32(0..2)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The TC channel range. CELSIUS=0, FAHRENHEIT=1, MILLIVOLT=2"
+		::= { tcEntry 4 }
+		
+tcValue OBJECT-TYPE
+		SYNTAX 			Integer32
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"The TC channel value."
+		::= { tcEntry 5 }
+
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+----------------------------------------------------------------
+----------------------------------------------------------------
+-- do-00
+doTable OBJECT-TYPE
+		SYNTAX 			SEQUENCE OF DOEntry
+		MAX-ACCESS 		not-accessible
+		STATUS 			current
+		DESCRIPTION		"The do channel monitor table"
+		::= { e2262monitor 2 }
+
+doEntry OBJECT-TYPE
+		SYNTAX			DOEntry
+		MAX-ACCESS 		not-accessible
+		STATUS 			current
+		DESCRIPTION		"The do channel monitor item"
+		INDEX { doIndex }
+		::= { doTable 1 }
+
+DOEntry ::= SEQUENCE {
+		doIndex		Integer32,
+		doType		Integer32,
+		doMode		Integer32,
+                    doStatus        Integer32,
+		doPulseONWidth		Unsigned32,
+		doPulseOFFWidth		Unsigned32,
+		doPulseStart	Integer32
+}
+
+doIndex OBJECT-TYPE
+		SYNTAX 			Integer32(1..4)
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"The do channel index."
+		::= { doEntry 1 }
+
+doType OBJECT-TYPE
+		SYNTAX 			Integer32(1)
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"The do channel type. 0=DI, DO=1"
+		::= { doEntry 2 }
+		
+doMode OBJECT-TYPE
+		SYNTAX 			Integer32(0..1)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The do channel mode. 0=DO, 1=Pulse Output"
+		::= { doEntry 3 }
+		
+doStatus OBJECT-TYPE
+        SYNTAX          Integer32 (0..1)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The do channel status. 0=Off, 1=On in DO mode or N=Count in pulse mode"
+		::= { doEntry 4 }
+		
+doPulseONWidth OBJECT-TYPE
+		SYNTAX 			Unsigned32(1..4294967295)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The do channel signal ON width. unit=5ms"
+		::= { doEntry 5 }
+		
+doPulseOFFWidth OBJECT-TYPE
+		SYNTAX 			Unsigned32(1..4294967295)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The do channel signal OFF width. unit=5ms"
+		::= { doEntry 6 }
+		
+doPulseStart OBJECT-TYPE
+		SYNTAX 			Integer32(0..1)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The do channel pulse start/stop. 0=stop, 1=start"
+		::= { doEntry 7 }		
+----------------------------------------------------------------
+----------------------------------------------------------------
+-- 1.3.6.1.4.1.8691.10.2210.10.4
+	logicSettings OBJECT IDENTIFIER ::= { e2262monitor 4 }
+
+----------------------------------------------------------------
+irTable OBJECT-TYPE
+			SYNTAX 			SEQUENCE OF IrEntry
+			MAX-ACCESS 		not-accessible
+			STATUS 			current
+			DESCRIPTION		"Table of internal registers"
+			::= { logicSettings 1 }
+                         
+irEntry OBJECT-TYPE
+		SYNTAX			IrEntry
+		MAX-ACCESS 		not-accessible
+		STATUS 			current
+		DESCRIPTION		"Table of internal registers"
+		INDEX { irIndex }
+		::= { irTable 1 }
+
+IrEntry ::= SEQUENCE {
+		irIndex		    	Integer32,
+		irName			OCTET STRING,
+		irValue		    	Integer32
+}                  
+
+irIndex OBJECT-TYPE
+		SYNTAX 			Integer32 (0..23)
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"The internal register index."
+		::= { irEntry 1 }
+
+irName OBJECT-TYPE
+		SYNTAX 			OCTET STRING (SIZE (0..19))
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The internal register description."
+		::= { irEntry 2 }
+
+irValue OBJECT-TYPE
+		SYNTAX 			Integer32(0..255)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The internal register working value."
+		::= { irEntry 3 }	
+
+	
+----------------------------------------------------------------
+-- TC TRAP
+-- 1.3.6.1.4.1.8691.10.2262.11
+-- -------------------------------------------------------------
+    tcChannelTrap OBJECT IDENTIFIER 
+	::= { e2262 11 }
+	
+    tcChannel0 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			tcValue(2)			-- tcValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The TC channel-00 value."
+		::= { tcChannelTrap 1 }	
+	
+    tcChannel1 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			tcValue(2)			-- tcValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The tc channel-01 value."
+		::= { tcChannelTrap 2 }	
+
+    tcChannel2 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			tcValue(2)			-- tcValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The tc channel-02 value."
+		::= { tcChannelTrap 3 }	
+		
+    tcChannel3 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			tcValue(2)			-- tcValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The tc channel-03 value."
+		::= { tcChannelTrap 4 }	
+		
+    tcChannel4 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			tcValue(2)			-- tcValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The tc channel-04 value."
+		::= { tcChannelTrap 5 }	
+		
+    tcChannel5 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			tcValue(2)			-- tcValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The tc channel-05 value."
+		::= { tcChannelTrap 6 }										
+	
+    tcChannel6 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			tcValue(2)			-- tcValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The tc channel-06 value."
+		::= { tcChannelTrap 7 }	
+		
+    tcChannel7 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			tcValue(2)			-- tcValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The TC channel-07 value."
+		::= { tcChannelTrap 8 }			
+----------------------------------------------------------------
+-- DO TRAP
+-- 1.3.6.1.4.1.8691.10.2262.12
+-- -------------------------------------------------------------
+    doChannelTrap OBJECT IDENTIFIER 
+	::= { e2262 12 }
+	
+    doChannel0 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			doValue(2)			-- doValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The DO channel-00 value."
+		::= { doChannelTrap 1 }	
+
+    doChannel1 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			doValue(2)			-- doValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The DO channel-01 value."
+		::= { doChannelTrap 2 }	
+		
+    doChannel2 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			doValue(2)			-- doValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The DO channel-02 value."
+		::= { doChannelTrap 3 }	
+		
+    doChannel3 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			doValue(2)			-- doValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The DO channel-03 value."
+		::= { doChannelTrap 4 }	
+							
+ ----------------------------------------------------------------
+-- Message TRAP
+-- 1.3.6.1.4.1.8691.10.2262.13
+----------------------------------------------------------------
+	messageTrap OBJECT IDENTIFIER 
+	::= { e2262 13 }
+
+    activeMessageTrap OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			msgValue(2)			-- message
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The SNMP trap with active message"
+		::= { messageTrap 1 }		
+END
+

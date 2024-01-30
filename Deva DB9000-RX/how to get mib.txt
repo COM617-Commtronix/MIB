@@ -1,0 +1,6 @@
+SNMPSettings
+Press the Download button to download the latest available DB9000-
+RX SNMP MIB file. Then specifyAgent ID, Agent Port, Community, Manager
+IPand Manager Port.
+Agent ID is used to identify the device among others when a SNMP
+notification is send. Agent - enables/disables SNMPAgent.

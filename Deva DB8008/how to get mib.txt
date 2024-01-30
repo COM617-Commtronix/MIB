@@ -1,0 +1,1 @@
+SNMP MIB FilePress the Download button to download DB8008 SNMP MIB file.The MIB file may change from one firmware revision to the other. Downloading thisNOTE:file from the device ensures that you have the proper MIB file.

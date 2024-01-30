@@ -1,0 +1,532 @@
+--
+-- *****************************************************************
+-- Moxa Active Ethernet I/O Server MIB
+--
+-- 04-15-2010
+--
+-- Copyright (c) 2008 by Moxa Networking Co., Ltd.
+-- All rights reserved.
+-- *****************************************************************
+--
+MOXA-IO-E2242-MIB DEFINITIONS ::= BEGIN
+	IMPORTS
+        enterprises, Unsigned32, Integer32, MODULE-IDENTITY, NOTIFICATION-TYPE, OBJECT-TYPE FROM SNMPv2-SMI;
+
+-- 1.3.6.1.4.1.8691.10.2242
+--	e2242 OBJECT IDENTIFIER ::= { e2000 2242 }
+
+    e2242   MODULE-IDENTITY
+    LAST-UPDATED "201602161500Z"
+    ORGANIZATION "Moxa Networking,Inc."
+    CONTACT-INFO
+            "Postal: Moxa Networking,Inc.
+             Fl.4, No.135,Lane 235,Pao-Chiao Rd.
+             Shing Tien City,Taipei,Taiwan,R.O.C
+             Tel: +866-2-89191230 "
+
+    DESCRIPTION
+            "The MIB module for Moxa ioLogik Active Ethernet I/O specific information.(V2.0)" 
+            
+    REVISION "201602161500Z"    
+    DESCRIPTION
+            "Update DESCRIPTION sequence for display"  
+                  
+    REVISION "201601141500Z"
+    DESCRIPTION
+            "Modify doStatus SYNTAX from Unsigned32 to Integer32."
+
+    REVISION "201408191800Z"
+    DESCRIPTION
+            "fix: Trap OID
+             Modify OBJECT-TYPE Name of dioLowWidth to dioPulseONWidth. 
+             Modify OBJECT-TYPE Name of dioHighWidth to dioPulseOFFWidth." 
+    
+    REVISION "201112131900Z"    
+    DESCRIPTION
+            "The MIB module for Moxa ioLogik Active Ethernet I/O specific information.(V2.0)" 
+            
+    REVISION "201006301800Z"
+    DESCRIPTION
+            "Updated version of this MIB."
+           ::= { e2000 2242 }    -- 1.3.6.1.4.1.8691.10.2242
+
+-- 1.3.6.1.4.1.8691
+	moxa OBJECT IDENTIFIER ::= { enterprises 8691 }
+
+-- 1.3.6.1.4.1.8691.10
+	e2000 OBJECT IDENTIFIER ::= { moxa 10 }
+
+-- 1.3.6.1.4.1.8691.10.2242.1
+	totalChannelNumber OBJECT-TYPE
+		SYNTAX Integer32 (1..20)
+		MAX-ACCESS read-only
+		STATUS current
+		DESCRIPTION
+			"Total I/O channels."
+		::= { e2242 1 }
+
+-- 1.3.6.1.4.1.8691.10.2242.2
+	serverModel OBJECT-TYPE
+		SYNTAX OCTET STRING
+		MAX-ACCESS read-only
+		STATUS current
+		DESCRIPTION
+			"The I/O server model."
+		::= { e2242 2 }
+
+-- 1.3.6.1.4.1.8691.10.2242.3
+	systemTime OBJECT-TYPE
+		SYNTAX Integer32
+		MAX-ACCESS read-only
+		STATUS current
+		DESCRIPTION
+			"I/O server up time (in seconds)."
+		::= { e2242 3 }
+
+-- 1.3.6.1.4.1.8691.10.2242.4
+	firmwareVersion OBJECT-TYPE
+		SYNTAX OCTET STRING
+		MAX-ACCESS read-only
+		STATUS current
+		DESCRIPTION
+			"The firmware version."
+		::= { e2242 4 }
+
+----------------------------------------------------------------
+-- I/O
+-- 1.3.6.1.4.1.8691.10.2242.10
+	e2242monitor OBJECT IDENTIFIER ::= { e2242 10 }
+
+----------------------------------------------------------------
+-- dio Channel
+dioTable OBJECT-TYPE
+		SYNTAX 			SEQUENCE OF DIOEntry
+		MAX-ACCESS 		not-accessible
+		STATUS 			current
+		DESCRIPTION		"The dio channel monitor table"
+		::= { e2242monitor 1 }
+
+dioEntry OBJECT-TYPE
+		SYNTAX 			DIOEntry
+		MAX-ACCESS 		not-accessible
+		STATUS 			current
+		DESCRIPTION		"The dio channel monitor item"
+		INDEX { dioIndex }
+		::= { dioTable 1 }
+
+DIOEntry ::= SEQUENCE { 
+    	dioIndex			Integer32,
+		dioType				Integer32,
+		dioMode				Integer32,    
+		dioStatus			Unsigned32, 		
+		dioFilter			Integer32,
+		dioTrigger   		Integer32, 
+		dioCntStart			Integer32,
+   		dioPulseStart		Integer32,
+		dioPulseONWidth		Unsigned32,
+		dioPulseOFFWidth	Unsigned32
+ 		
+		}                      
+
+
+dioIndex OBJECT-TYPE
+		SYNTAX 			Integer32 (0..11)
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"The channel dio index."
+		::= { dioEntry 1 }
+
+dioType OBJECT-TYPE
+		SYNTAX 			Integer32 (0..1)
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"The channel dio type. 0=DI, DO=1, AI=2"
+		::= { dioEntry 2 }
+		
+dioMode OBJECT-TYPE
+		SYNTAX 			Integer32 (0..1)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The channel dio mode. 0=DI, 1=Event Counter"
+		::= { dioEntry 3 }
+		
+dioStatus OBJECT-TYPE
+		SYNTAX 			Unsigned32 (0..4294967295)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The channel dio(di/do) status. 0=Off, 1=On in DI/DO mode or N=Count in DO counter mode"
+		::= { dioEntry 4 }
+		
+dioFilter OBJECT-TYPE
+		SYNTAX 			Integer32 (1..65535)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The channel dio(di) counter filter. unit=0.5ms"
+		::= { dioEntry 5 }
+
+dioTrigger OBJECT-TYPE
+		SYNTAX 			Integer32 (0..1)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The channel dio(di) counter trigger level. 0=L2H, 1=H2L"
+		::= { dioEntry 6 }
+		
+dioCntStart OBJECT-TYPE
+		SYNTAX Integer32 	(0..1)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The channel dio(do) counter start/stop. 0=stop, 1=start"
+		::= { dioEntry 7 }
+
+dioPulseStart OBJECT-TYPE
+		SYNTAX 			Integer32 (0..1)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The channel dio(do) pulse start/stop. 0=stop, 1=start"
+		::= { dioEntry 8 }
+		
+dioPulseONWidth OBJECT-TYPE
+		SYNTAX 			Unsigned32 (1..4294967295)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The channel dio(do) signal ON width. unit=0.5ms"
+		::= { dioEntry 9 }
+		
+dioPulseOFFWidth OBJECT-TYPE
+		SYNTAX 			Unsigned32 (1..4294967295)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The channel dio(do) signal OFF width. unit=0.5ms"
+		::= { dioEntry 10 }
+
+		
+
+
+
+----------------------------------------------------------------
+-- ai-00
+aiTable OBJECT-TYPE
+		SYNTAX 			SEQUENCE OF AIEntry
+		MAX-ACCESS 		not-accessible
+		STATUS 			current
+		DESCRIPTION		"The ai channel monitor table"
+		::= { e2242monitor 2 }
+
+aiEntry OBJECT-TYPE
+		SYNTAX			AIEntry
+		MAX-ACCESS 		not-accessible
+		STATUS 			current
+		DESCRIPTION		"The ai channel monitor item"
+		INDEX { aiIndex }
+		::= { aiTable 1 }
+
+AIEntry ::=	SEQUENCE {
+		aiIndex			Integer32,
+		aiEnable		Integer32,
+		aiRange			Integer32,
+		aiValue			Integer32,
+		aiMin			Integer32,
+		aiMax			Integer32
+}
+
+aiIndex OBJECT-TYPE
+		SYNTAX 			Integer32 (0..3)
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"The ai channel index."
+		::= { aiEntry 1 }
+
+aiEnable OBJECT-TYPE
+		SYNTAX 			Integer32 (0..1)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The ai channel type. Enable=1(AI Enable),   Enable=0(AI Disable)"
+		::= { aiEntry 2 }
+		
+aiRange OBJECT-TYPE
+		SYNTAX 			Integer32 (0..9)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The ai channel range. +/-150mV=0, +/-500mV=1, +/-5V=2, +/-10V=3, 0-20mA=4, 4-20mA=5, 0-150mV=6, 0-500mV=7, 0-5V=8, 0-10V=9"
+		::= { aiEntry 3 }
+		
+aiValue OBJECT-TYPE
+		SYNTAX 			Integer32
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"The ai channel value (RAW)."
+		::= { aiEntry 4 }
+		
+aiMin OBJECT-TYPE
+		SYNTAX 			Integer32
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"The ai channel minimum value (RAW)."
+		::= { aiEntry 5 }
+		
+aiMax OBJECT-TYPE
+		SYNTAX 			Integer32
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"The ai channel maximum value (RAW)."
+		::= { aiEntry 6 }
+
+
+----------------------------------------------------------------
+-- 1.3.6.1.4.1.8691.10.2210.10.4
+	logicSettings OBJECT IDENTIFIER ::= { e2242monitor 4 }
+
+----------------------------------------------------------------
+irTable OBJECT-TYPE
+			SYNTAX 			SEQUENCE OF IrEntry
+			MAX-ACCESS 		not-accessible
+			STATUS 			current
+			DESCRIPTION		"Table of internal registers"
+			::= { logicSettings 1 }
+                         
+irEntry OBJECT-TYPE
+		SYNTAX			IrEntry
+		MAX-ACCESS 		not-accessible
+		STATUS 			current
+		DESCRIPTION		"Table of internal registers"
+		INDEX { irIndex }
+		::= { irTable 1 }
+
+IrEntry ::= SEQUENCE {
+		irIndex		    	Integer32,
+		irName			OCTET STRING,
+		irValue		    	Integer32
+}                  
+
+irIndex OBJECT-TYPE
+		SYNTAX 			Integer32 (0..23)
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"The internal register index."
+		::= { irEntry 1 }
+
+irName OBJECT-TYPE
+		SYNTAX 			OCTET STRING (SIZE (0..19))
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The internal register description."
+		::= { irEntry 2 }
+
+irValue OBJECT-TYPE
+		SYNTAX 			Integer32(0..255)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"The internal register working value."
+		::= { irEntry 3 }
+
+
+----------------------------------------------------------------
+-- DIO TRAP
+-- 1.3.6.1.4.1.8691.10.2242.11
+-- -------------------------------------------------------------
+    dioChannelTrap OBJECT IDENTIFIER 
+	::= { e2242 11 }
+	
+    dioChannel0 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			dioValue(2)			-- dioValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The channel dio-00 status. 0=Off, 1=On in DI mode or N=Count in counter mode"
+		::= { dioChannelTrap 1 }	
+
+    dioChannel1 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			dioValue(2)			-- dioValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The channel dio-01 status. 0=Off, 1=On in DI mode or N=Count in counter mode"
+		::= { dioChannelTrap 2 }	
+		
+    dioChannel2 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			dioValue(2)			-- dioValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The channel dio-02 status. 0=Off, 1=On in DI mode or N=Count in counter mode"
+		::= { dioChannelTrap 3 }	
+		
+    dioChannel3 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			dioValue(2)			-- dioValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The channel dio-03 status. 0=Off, 1=On in DI mode or N=Count in counter mode"
+		::= { dioChannelTrap 4 }	
+		
+    dioChannel4 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			dioValue(2)			-- dioValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The channel dio-04 status. 0=Off, 1=On in DI mode or N=Count in counter mode"
+		::= { dioChannelTrap 5 }	
+		
+    dioChannel5 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			dioValue(2)			-- dioValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The channel dio-05 status. 0=Off, 1=On in DI mode or N=Count in counter mode"
+		::= { dioChannelTrap 6 }	
+		
+    dioChannel6 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			dioValue(2)			-- dioValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The channel dio-06 status. 0=Off, 1=On in DI mode or N=Count in counter mode"
+		::= { dioChannelTrap 7 }	
+		
+    dioChannel7 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			dioValue(2)			-- dioValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The channel dio-07 status. 0=Off, 1=On in DI mode or N=Count in counter mode"
+		::= { dioChannelTrap 8 }	
+		
+    dioChannel8 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			dioValue(2)			-- dioValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The channel dio-08 status. 0=Off, 1=On in DI mode or N=Count in counter mode"
+		::= { dioChannelTrap 9 }	
+		
+    dioChannel9 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			dioValue(2)			-- dioValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The channel dio-09 status. 0=Off, 1=On in DI mode or N=Count in counter mode"
+		::= { dioChannelTrap 10 }	
+		
+    dioChannel10 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			dioValue(2)			-- dioValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The channel dio-10 status. 0=Off, 1=On in DI mode or N=Count in counter mode"
+		::= { dioChannelTrap 11 }	
+		
+    dioChannel11 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			dioValue(2)			-- dioValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The channel dio-11 status. 0=Off, 1=On in DI mode or N=Count in counter mode"
+		::= { dioChannelTrap 12 }																					
+
+
+----------------------------------------------------------------
+-- AI TRAP
+-- 1.3.6.1.4.1.8691.10.2242.12
+-- -------------------------------------------------------------
+    aiChannelTrap OBJECT IDENTIFIER 
+	::= { e2242 12 }
+	
+    aiChannel0 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			aiValue(2)			-- aiValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The ai channel-00 value (RAW)."
+		::= { aiChannelTrap 1 }	
+
+    aiChannel1 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			aiValue(2)			-- aiValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The ai channel-01 value (RAW)."
+		::= { aiChannelTrap 2 }
+		
+    aiChannel2 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			aiValue(2)			-- aiValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The ai channel-02 value (RAW)."
+		::= { aiChannelTrap 3 }
+		
+    aiChannel3 OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			aiValue(2)			-- aiValue
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The ai channel-03 value (RAW)."
+		::= { aiChannelTrap 4 }				
+
+----------------------------------------------------------------
+-- Message TRAP
+-- 1.3.6.1.4.1.8691.10.2242.13
+----------------------------------------------------------------
+	messageTrap OBJECT IDENTIFIER 
+	::= { e2242 13 }
+
+    activeMessageTrap OBJECT-TYPE
+		SYNTAX	INTEGER {
+			none(1),			-- nothing happened
+			msgValue(2)			-- message
+		}
+		MAX-ACCESS	read-only
+		STATUS	current
+		DESCRIPTION
+			"The SNMP trap with active message"
+		::= { messageTrap 1 }		
+END
+
