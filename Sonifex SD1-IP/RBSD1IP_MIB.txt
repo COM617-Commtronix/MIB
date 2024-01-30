@@ -1,0 +1,448 @@
+SONIFEX-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    OBJECT-TYPE, NOTIFICATION-TYPE, MODULE-IDENTITY,
+    Integer32, Opaque, enterprises, Counter32
+        FROM SNMPv2-SMI
+
+    TEXTUAL-CONVENTION, DisplayString, TruthValue
+	FROM SNMPv2-TC;
+
+
+sonifex MODULE-IDENTITY
+    LAST-UPDATED "201410080000Z"
+    ORGANIZATION "SONIFEX LTD"
+    CONTACT-INFO "sales@sonifex.co.uk"
+    DESCRIPTION "Sonifex Ltd - MIB Definitions for SNMP Enabled Redbox Silence Detector RB-SD1IP"
+    ::= { enterprises 41871 }
+
+-- Redbox Silence Detector 1 IP Enabled (RB-SD1IP) 
+
+rbsd1ip       OBJECT IDENTIFIER ::= { sonifex 2 }
+
+sysinfo       OBJECT IDENTIFIER ::= { rbsd1ip 1 }
+config        OBJECT IDENTIFIER ::= { rbsd1ip 2 }
+monitor       OBJECT IDENTIFIER ::= { rbsd1ip 3 }
+traps         OBJECT IDENTIFIER ::= { rbsd1ip 4 }
+
+-- Configuration Subtrees
+
+-- Monitor Subtrees
+levels        OBJECT IDENTIFIER ::= { monitor 2 }
+    inputs        OBJECT IDENTIFIER ::= { levels 1 }
+	silence       OBJECT IDENTIFIER ::= { levels 2 }
+alarms        OBJECT IDENTIFIER ::= { monitor 3 }
+outputs       OBJECT IDENTIFIER ::= { monitor 4 }
+gpi           OBJECT IDENTIFIER ::= { monitor 5 }
+
+
+
+-- STATIC UNIT INFO
+
+product OBJECT-TYPE
+    SYNTAX	DisplayString
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+	"Name of Product. e.g. Redbox FS82"
+    ::= { sysinfo 1 }
+	
+version OBJECT-TYPE
+    SYNTAX	DisplayString
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+	"Firmware Version Number. e.g. V1.00"
+    ::= { sysinfo 2 }
+	
+	
+-- CONFIGURABLE UNIT INFO
+-- Source
+
+sourceSelect OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"Select input A as the Main preferred source(1), or input B as the Main preferred source(0)"
+    ::= { config 1 }
+
+-- Mode
+
+modeSelect OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"Select the Restore Mode, Automatic(1) or Manual(0)"
+    ::= { config 2 }
+	
+-- Restore
+
+restore OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"Manual restore flag can be Raised(1) or Cleared(0)"
+    ::= { config 3 }
+
+-- Time
+
+twoMinutes OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"When enabled(1) the unit will enforce a global silence detect time of 2 minutes and 5 seconds until disabled(0)"
+    ::= { config 4 }
+
+-- Force Output
+
+forceOutput OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-write
+    STATUS	current
+    DESCRIPTION
+	"This option changes the unit from Normal Mode (0) to force the Output routing to either; Input A (1), Input B (2), USB (3)"
+    ::= { config 5 }
+	
+	
+-- MONITORING INFORMATION
+
+-- Levels Subtree
+-- Inputs
+
+inputAleft OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+	"The Signal Level for the Left channel of input A in dBu e.g. 12"
+    ::= { inputs 1 }
+
+inputAright OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+	"The Signal Level for the Right channel of input A in dBu e.g. 12"
+    ::= { inputs 2 }
+	
+inputBleft OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+	"The Signal Level for the Left channel of input B in dBu e.g. 12"
+    ::= { inputs 3 }
+
+inputBright OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+	"The Signal Level for the Right channel of input B in dBu e.g. 12"
+    ::= { inputs 4 }
+
+-- Silence
+
+silAleft OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+	"The Silence Level set for the Left channel of input A in dBu e.g. -12"
+    ::= { silence 1 }
+
+silAright OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+	"The Silence Level set for the Right channel of input A in dBu e.g. -12"
+    ::= { silence 2 }
+	
+silBleft OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+	"The Silence Level set for the Left channel of input B in dBu e.g. -12"
+    ::= { silence 3 }
+
+silBright OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+	"The Silence Level set for the Right channel of input B in dBu e.g. -12"
+    ::= { silence 4 }
+
+-- Alarms Subtree
+
+alarmAleft OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    "Input A Left Alarm State - Alarmed (1) or Normal (0)"
+    ::= { alarms 1 }
+	
+alarmAright OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    "Input A Right Alarm State - Alarmed (1) or Normal (0)"
+    ::= { alarms 2 }
+
+alarmBleft OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    "Input B Left Alarm State - Alarmed (1) or Normal (0)"
+    ::= { alarms 3 }
+	
+alarmBright OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    "Input B Right Alarm State - Alarmed (1) or Normal (0)"
+    ::= { alarms 4 }
+
+-- Output Subtree
+
+outLeft OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    "Output Left Source - Main Left (0),  Aux Left (1) or USB Left (2)"
+    ::= { outputs 1 }
+	
+outRight OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    "Output Right Source - Main Right (0),  Aux Right (1) or USB Right (2)"
+    ::= { outputs 2 }
+
+-- GPI Subtree
+
+gpi1 OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    "GPI 1 State - Inactive (0),  Active (1)"
+    ::= { gpi 1 }
+	
+gpi2 OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    "GPI 2 State - Inactive (0),  Active (1)"
+    ::= { gpi 2 }
+
+gpi3 OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    "GPI 3 State - Inactive (0),  Active (1)"
+    ::= { gpi 3 }
+	
+gpi4 OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    "GPI 4 State - Inactive (0),  Active (1)"
+    ::= { gpi 4 }
+	
+gpi5 OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    "GPI 5 State - Inactive (0),  Active (1)"
+    ::= { gpi 5 }
+	
+gpi6 OBJECT-TYPE
+    SYNTAX	Integer32
+    MAX-ACCESS	read-only
+    STATUS	current
+    DESCRIPTION
+    "GPI 6 State - Inactive (0),  Active (1)"
+    ::= { gpi 6 }
+	
+
+-- TRAPS
+-- Silence Traps
+
+-- A Left and Right Silence Alarm Traps
+-- A Left and Right Signal OK Traps
+
+aleftAlarm NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs with the Silence Alarm for the Left channel of Input A."
+    ::= { traps 1 }
+
+aleftOK NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the Left channel of Input A is no longer alarmed."
+    ::= { traps 2 }
+
+arightAlarm NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs with the Silence Alarm for the Right channel of Input A."
+    ::= { traps 3 }
+
+arightOK NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the Right channel of Input A is no longer alarmed."
+    ::= { traps 4 }
+
+
+-- B Left and Right Silence Alarm Traps 
+-- B Left and Right Signal OK Traps
+
+bleftAlarm NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs with the Silence Alarm for the Left channel of Input B."
+    ::= { traps 5 }
+
+bleftOK NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the Left channel of Input B is no longer alarmed."
+    ::= { traps 6 }
+
+brightAlarm NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs with the Silence Alarm for the Right channel of Input B."
+    ::= { traps 7 }
+
+brightOK NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the Right channel of Input B is no longer alarmed."
+    ::= { traps 8 }
+
+
+-- Output Traps
+
+outLeftChange NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the Left output Channel Source changes."
+    ::= { traps 9 }
+
+outRightChange NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the Right output Channel Source changes."
+    ::= { traps 10 }
+
+
+-- GPI Traps
+
+gpi1Active NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the state of GPI 1 becomes Active."
+    ::= { traps 11 }
+
+gpi1Inactive NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the state of GPI 1 becomes Inactive."
+    ::= { traps 12 }
+
+gpi2Active NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the state of GPI 2 becomes Active."
+    ::= { traps 13 }
+
+gpi2Inactive NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the state of GPI 2 becomes Inactive."
+    ::= { traps 14 }
+
+gpi3Active NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the state of GPI 3 becomes Active."
+    ::= { traps 15 }
+
+gpi3Inactive NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the state of GPI 3 becomes Inactive."
+    ::= { traps 16 }
+
+gpi4Active NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the state of GPI 4 becomes Active."
+    ::= { traps 17 }
+
+gpi4Inactive NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the state of GPI 4 becomes Inactive."
+    ::= { traps 18 }
+
+gpi5Active NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the state of GPI 5 becomes Active."
+    ::= { traps 19 }
+
+gpi5Inactive NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the state of GPI 5 becomes Inactive."
+    ::= { traps 20 }
+
+gpi6Active NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the state of GPI 6 becomes Active."
+    ::= { traps 21 }
+
+gpi6Inactive NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when the state of GPI 6 becomes Inactive."
+    ::= { traps 22 }
+
+-- USB Traps
+
+usbPlugged NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when a USB device is connected to the unit."
+    ::= { traps 23 }
+
+usbUnplugged NOTIFICATION-TYPE
+    STATUS  current
+    DESCRIPTION
+        "This Trap occurs when a USB device is disconnected from the unit."
+    ::= { traps 24 }
+
+END
+

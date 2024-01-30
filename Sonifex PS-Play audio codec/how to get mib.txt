@@ -1,0 +1,11 @@
+MIB Files for SNMP Configuration
+Management Information Base (MIB) files are required for SNMP applications to interact with your
+Tieline codec and interpret SNMP data. The codec supports SNMPv1 and SNMPv2 MIB protocols.
+The required MIB files can be downloaded from the codec using the following link in a PC web
+browser connected to the same network as your codec:
+· http://<YOUR_CODEC_ADDRESS>/mibs/tieline-mibs.zip
+Save the .zip file to your PC and import the contents into the MIB browser you use to manage
+SNMP-enabled network devices.
+Important Note: The codec supports the attributes specified in the MIB-II standard.
+Please verify that your SNMP software contains the required files as specified in RFC
+1213
